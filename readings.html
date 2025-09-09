@@ -5,74 +5,222 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Smart Irrigation Dashboard</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f0f4f8;
+    * {
       margin: 0;
       padding: 0;
-      color: #333;
+      box-sizing: border-box;
     }
-    .container {
-      max-width: 1100px;
-      margin: auto;
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      color: #333;
       padding: 20px;
     }
-    h1 {
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .header {
       text-align: center;
-      margin-bottom: 20px;
-      color: #2c7a7b;
+      margin-bottom: 40px;
     }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 20px;
-    }
-    .card {
-      background: white;
-      border-radius: 12px;
-      padding: 15px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      transition: transform 0.2s ease-in-out;
-    }
-    .card:hover {
-      transform: translateY(-4px);
-    }
-    .card h2 {
-      font-size: 16px;
+
+    .header h1 {
+      font-size: 2.5em;
+      color: white;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
       margin-bottom: 10px;
-      color: #2f855a;
     }
-    .value {
-      font-size: 16px;
-      padding: 10px;
-      border-radius: 8px;
+
+    .header .subtitle {
+      color: rgba(255,255,255,0.9);
+      font-size: 1.1em;
+      font-weight: 300;
+    }
+
+    .timestamp-card {
+      background: linear-gradient(135deg, #2c3e50, #34495e);
+      color: white;
+      border-radius: 20px;
+      padding: 20px;
+      margin-bottom: 30px;
       text-align: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
     }
+
+    .timestamp-card h2 {
+      font-size: 1.5em;
+      margin-bottom: 10px;
+    }
+
+    .sensors-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .sensor-card {
+      background: rgba(255,255,255,0.95);
+      border-radius: 20px;
+      padding: 25px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .sensor-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #667eea, #764ba2);
+    }
+
+    .sensor-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+    }
+
+    .sensor-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    .sensor-icon {
+      font-size: 2.5em;
+      margin-right: 15px;
+    }
+
+    .sensor-title {
+      font-size: 1.3em;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+
+    .sensor-value {
+      font-size: 1.8em;
+      font-weight: bold;
+      margin: 10px 0;
+      padding: 15px;
+      border-radius: 15px;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    .sensor-unit {
+      font-size: 0.7em;
+      opacity: 0.8;
+      font-weight: normal;
+    }
+
+    /* Status Colors */
+    .excellent {
+      background: linear-gradient(135deg, #00f260, #0575e6);
+      color: white;
+      box-shadow: 0 5px 15px rgba(5, 117, 230, 0.4);
+    }
+
     .good {
-      background: #c6f6d5; /* light green */
+      background: linear-gradient(135deg, #56ab2f, #a8e6cf);
+      color: white;
+      box-shadow: 0 5px 15px rgba(86, 171, 47, 0.4);
     }
-    .warn {
-      background: #fefcbf; /* light yellow */
+
+    .moderate {
+      background: linear-gradient(135deg, #f7971e, #ffd200);
+      color: white;
+      box-shadow: 0 5px 15px rgba(247, 151, 30, 0.4);
     }
-    .bad {
-      background: #fed7d7; /* light red */
+
+    .warning {
+      background: linear-gradient(135deg, #ff6a00, #ee0979);
+      color: white;
+      box-shadow: 0 5px 15px rgba(255, 106, 0, 0.4);
     }
-    .timestamp {
+
+    .critical {
+      background: linear-gradient(135deg, #dc2424, #4a569d);
+      color: white;
+      box-shadow: 0 5px 15px rgba(220, 36, 36, 0.4);
+    }
+
+    .section-title {
       text-align: center;
-      margin-bottom: 20px;
-      font-size: 14px;
-      color: #555;
+      font-size: 2em;
+      color: white;
+      margin: 40px 0 30px 0;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .loading {
+      text-align: center;
+      color: white;
+      font-size: 1.2em;
+      margin: 50px 0;
+    }
+
+    .loading::after {
+      content: '...';
+      animation: dots 1.5s steps(4, end) infinite;
+    }
+
+    @keyframes dots {
+      0%, 20% { color: rgba(255,255,255,0.4); }
+      40% { color: white; }
+      100% { color: rgba(255,255,255,0.4); }
+    }
+
+    @media (max-width: 768px) {
+      .sensors-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+      }
+      
+      .header h1 {
+        font-size: 2em;
+      }
+      
+      .sensor-card {
+        padding: 20px;
+      }
+      
+      .sensor-value {
+        font-size: 1.5em;
+      }
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>🌱 Smart Irrigation Dashboard</h1>
-    <div id="timestamp" class="timestamp"></div>
-    <div id="sensor-grid" class="grid"></div>
+    <div class="header">
+      <h1>🌱 Smart Irrigation Dashboard</h1>
+      <div class="subtitle">Real-time Agricultural Monitoring System</div>
+    </div>
+    
+    <div id="timestamp-display" class="timestamp-card">
+      <h2>📅 Loading sensor data...</h2>
+    </div>
+
+    <div class="section-title">🥕 Raspberry Pi Sensors</div>
+    <div id="pi-sensors" class="sensors-grid loading">Loading Pi sensor data</div>
+
+    <div class="section-title">🌾 Slave Device Sensors</div>
+    <div id="slave-sensors" class="sensors-grid loading">Loading slave sensor data</div>
   </div>
 
   <script type="module">
+    // Import Firebase
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
     import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
 
@@ -91,83 +239,251 @@
     // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
-
     const sensorRef = ref(db, "sensor_readings");
 
-    // Calibration quick fixes
-    function calibrate(sensor, value) {
-      if (value == null) return null;
-      switch (sensor) {
-        case "Soil1": return value * 0.8 + 5;
-        case "Soil2": return value * 0.9;
-        case "Soil3": return value * 1.1 - 3;
-        case "DHT22_Temp": return value - 2;
-        case "BMP280_Temp": return value - 1.5;
-        default: return value;
+    // Sensor configurations with icons and classification logic
+    const sensorConfig = {
+      // Pi Sensors
+      'BMP280_Pressure': {
+        icon: '🌪️',
+        title: 'Atmospheric Pressure',
+        unit: 'hPa',
+        classify: (value) => {
+          if (value > 1030) return 'excellent';
+          if (value > 1000) return 'good';
+          if (value > 980) return 'moderate';
+          return 'warning';
+        }
+      },
+      'BMP280_Temp': {
+        icon: '🌡️',
+        title: 'BMP Temperature',
+        unit: '°C',
+        classify: (value) => {
+          if (value >= 20 && value <= 28) return 'excellent';
+          if (value >= 15 && value <= 35) return 'good';
+          if (value >= 10 && value <= 40) return 'moderate';
+          if (value >= 5 && value <= 45) return 'warning';
+          return 'critical';
+        }
+      },
+      'DHT22_Humidity': {
+        icon: '💧',
+        title: 'Air Humidity',
+        unit: '%',
+        classify: (value) => {
+          if (value >= 40 && value <= 60) return 'excellent';
+          if (value >= 30 && value <= 70) return 'good';
+          if (value >= 20 && value <= 80) return 'moderate';
+          return 'warning';
+        }
+      },
+      'DHT22_Temp': {
+        icon: '🌡️',
+        title: 'DHT Temperature',
+        unit: '°C',
+        classify: (value) => {
+          if (value >= 20 && value <= 28) return 'excellent';
+          if (value >= 15 && value <= 35) return 'good';
+          if (value >= 10 && value <= 40) return 'moderate';
+          if (value >= 5 && value <= 45) return 'warning';
+          return 'critical';
+        }
+      },
+      'PT1000_Temp': {
+        icon: '🔥',
+        title: 'PT1000 Temperature',
+        unit: '°C',
+        classify: (value) => {
+          if (value >= 20 && value <= 28) return 'excellent';
+          if (value >= 15 && value <= 35) return 'good';
+          if (value >= 10 && value <= 40) return 'moderate';
+          if (value >= 5 && value <= 45) return 'warning';
+          return 'critical';
+        }
+      },
+      'Rain': {
+        icon: '🌧️',
+        title: 'Rain Detection',
+        unit: '',
+        classify: (value) => {
+          // Assuming 0 = no rain, higher values = more rain
+          if (value === 0) return 'excellent';
+          if (value <= 10) return 'good';
+          if (value <= 50) return 'moderate';
+          return 'warning';
+        }
+      },
+      'SM1': {
+        icon: '🌱',
+        title: 'Soil Moisture 1',
+        unit: '',
+        classify: (value) => {
+          if (value < 800) return 'excellent';   // Very moist
+          if (value < 1200) return 'good';       // Good moisture
+          if (value < 2000) return 'moderate';   // Moderate
+          if (value < 2500) return 'warning';    // Dry
+          return 'critical';                     // Very dry
+        }
+      },
+      'SM2': {
+        icon: '🌿',
+        title: 'Soil Moisture 2',
+        unit: '',
+        classify: (value) => {
+          if (value < 800) return 'excellent';
+          if (value < 1200) return 'good';
+          if (value < 2000) return 'moderate';
+          if (value < 2500) return 'warning';
+          return 'critical';
+        }
+      },
+      'WindSpeed': {
+        icon: '💨',
+        title: 'Wind Speed',
+        unit: 'm/s',
+        classify: (value) => {
+          if (value <= 5) return 'excellent';    // Calm to light breeze
+          if (value <= 15) return 'good';        // Moderate breeze
+          if (value <= 25) return 'moderate';    // Strong breeze
+          if (value <= 35) return 'warning';     // Gale
+          return 'critical';                     // Storm
+        }
+      },
+      // Slave Sensors
+      'Soil1': {
+        icon: '🌾',
+        title: 'Field Soil 1',
+        unit: '',
+        classify: (value) => {
+          if (value < 800) return 'excellent';
+          if (value < 1200) return 'good';
+          if (value < 2000) return 'moderate';
+          if (value < 2500) return 'warning';
+          return 'critical';
+        }
+      },
+      'Soil2': {
+        icon: '🌽',
+        title: 'Field Soil 2',
+        unit: '',
+        classify: (value) => {
+          if (value < 800) return 'excellent';
+          if (value < 1200) return 'good';
+          if (value < 2000) return 'moderate';
+          if (value < 2500) return 'warning';
+          return 'critical';
+        }
+      },
+      'Soil3': {
+        icon: '🥬',
+        title: 'Field Soil 3',
+        unit: '',
+        classify: (value) => {
+          if (value < 800) return 'excellent';
+          if (value < 1200) return 'good';
+          if (value < 2000) return 'moderate';
+          if (value < 2500) return 'warning';
+          return 'critical';
+        }
+      },
+      'Soil4': {
+        icon: '🥕',
+        title: 'Field Soil 4',
+        unit: '',
+        classify: (value) => {
+          if (value < 800) return 'excellent';
+          if (value < 1200) return 'good';
+          if (value < 2000) return 'moderate';
+          if (value < 2500) return 'warning';
+          return 'critical';
+        }
+      },
+      'Temp1': {
+        icon: '🌡️',
+        title: 'Field Temperature 1',
+        unit: '°C',
+        classify: (value) => {
+          if (value >= 20 && value <= 28) return 'excellent';
+          if (value >= 15 && value <= 35) return 'good';
+          if (value >= 10 && value <= 40) return 'moderate';
+          if (value >= 5 && value <= 45) return 'warning';
+          return 'critical';
+        }
+      },
+      'Temp2': {
+        icon: '🌡️',
+        title: 'Field Temperature 2',
+        unit: '°C',
+        classify: (value) => {
+          if (value >= 20 && value <= 28) return 'excellent';
+          if (value >= 15 && value <= 35) return 'good';
+          if (value >= 10 && value <= 40) return 'moderate';
+          if (value >= 5 && value <= 45) return 'warning';
+          return 'critical';
+        }
       }
+    };
+
+    function createSensorCard(key, value, config) {
+      const classification = config.classify(value);
+      return `
+        <div class="sensor-card">
+          <div class="sensor-header">
+            <div class="sensor-icon">${config.icon}</div>
+            <div class="sensor-title">${config.title}</div>
+          </div>
+          <div class="sensor-value ${classification}">
+            ${value} <span class="sensor-unit">${config.unit}</span>
+          </div>
+        </div>
+      `;
     }
 
-    // Add color class
-    function classifyValue(type, value) {
-      if (value == null) return "";
-      if (type === "soil") {
-        if (value > 2000) return "bad";
-        if (value > 1000) return "warn";
-        return "good";
-      }
-      if (type === "temp") {
-        if (value > 35) return "bad";
-        if (value < 15) return "warn";
-        return "good";
-      }
-      return "";
-    }
-
-    // Render
+    // Listen for updates
     onValue(sensorRef, (snapshot) => {
       const data = snapshot.val();
       if (!data) return;
 
+      // Get latest entry
       const keys = Object.keys(data);
       const latestKey = keys[keys.length - 1];
       const latestData = data[latestKey];
+
       const sensors = latestData.PiSensors || {};
       const slave = latestData.Slave || {};
       const timestamp = latestData.timestamp || "";
 
-      document.getElementById("timestamp").innerText = `📅 Latest Update: ${timestamp}`;
+      // Update timestamp
+      document.getElementById("timestamp-display").innerHTML = `
+        <h2>📅 Last Updated: ${timestamp}</h2>
+        <div>System Status: <span style="color: #00f260;">● Online</span></div>
+      `;
 
-      const grid = document.getElementById("sensor-grid");
-      grid.innerHTML = "";
+      // Pi Sensors
+      const piSensorKeys = ['BMP280_Pressure', 'BMP280_Temp', 'DHT22_Humidity', 'DHT22_Temp', 'PT1000_Temp', 'Rain', 'SM1', 'SM2', 'WindSpeed'];
+      const piSensorsHTML = piSensorKeys.map(key => {
+        const value = sensors[key];
+        const config = sensorConfig[key];
+        return config ? createSensorCard(key, value, config) : '';
+      }).join('');
 
-      const sensorList = [
-        { label: "BMP280 Pressure", value: sensors.BMP280_Pressure },
-        { label: "BMP280 Temp (°C)", value: calibrate("BMP280_Temp", sensors.BMP280_Temp), type: "temp" },
-        { label: "DHT22 Humidity (%)", value: sensors.DHT22_Humidity },
-        { label: "DHT22 Temp (°C)", value: calibrate("DHT22_Temp", sensors.DHT22_Temp), type: "temp" },
-        { label: "PT1000 Temp (°C)", value: sensors.PT1000_Temp, type: "temp" },
-        { label: "Rain", value: sensors.Rain },
-        { label: "Soil Moisture 1", value: sensors.SM1, type: "soil" },
-        { label: "Soil Moisture 2", value: sensors.SM2, type: "soil" },
-        { label: "Wind Speed", value: sensors.WindSpeed },
-        { label: "Soil1", value: calibrate("Soil1", slave.Soil1), type: "soil" },
-        { label: "Soil2", value: calibrate("Soil2", slave.Soil2), type: "soil" },
-        { label: "Soil3", value: calibrate("Soil3", slave.Soil3), type: "soil" },
-        { label: "Soil4", value: slave.Soil4, type: "soil" },
-        { label: "Slave Temp1 (°C)", value: slave.Temp1, type: "temp" },
-        { label: "Slave Temp2 (°C)", value: slave.Temp2, type: "temp" }
-      ];
+      document.getElementById("pi-sensors").innerHTML = piSensorsHTML || '<div class="loading">No Pi sensor data available</div>';
 
-      sensorList.forEach(s => {
-        if (s.value == null) return;
-        const div = document.createElement("div");
-        div.className = "card";
-        div.innerHTML = `
-          <h2>${s.label}</h2>
-          <div class="value ${classifyValue(s.type, s.value)}">${s.value}</div>
-        `;
-        grid.appendChild(div);
-      });
+      // Slave Sensors
+      const slaveSensorKeys = ['Soil1', 'Soil2', 'Soil3', 'Soil4', 'Temp1', 'Temp2'];
+      const slaveSensorsHTML = slaveSensorKeys.map(key => {
+        const value = slave[key];
+        const config = sensorConfig[key];
+        return config ? createSensorCard(key, value, config) : '';
+      }).join('');
+
+      document.getElementById("slave-sensors").innerHTML = slaveSensorsHTML || '<div class="loading">No slave sensor data available</div>';
+      
+      console.log('Pi Sensors Data:', sensors);
+      console.log('Slave Sensors Data:', slave);
+      console.log('Total Pi cards:', piSensorsHTML.split('sensor-card').length - 1);
+      console.log('Total Slave cards:', slaveSensorsHTML.split('sensor-card').length - 1);
     });
   </script>
 </body>
