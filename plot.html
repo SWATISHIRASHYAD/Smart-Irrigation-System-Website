@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Irrigation - Sensor Plots</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f8fafc;
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
+    .container {
+      max-width: 1200px;
+      margin: auto;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #2c7a7b;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+    .chart-container {
+      background: white;
+      border-radius: 12px;
+      padding: 15px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    canvas {
+      width: 100% !important;
+      height: 300px !important;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📊 Smart Irrigation Sensor Data (Last 7 Days)</h1>
+    <div class="grid" id="charts">
+      <div class="chart-container"><canvas id="BMP280_Pressure"></canvas></div>
+      <div class="chart-container"><canvas id="BMP280_Temp"></canvas></div>
+      <div class="chart-container"><canvas id="DHT22_Humidity"></canvas></div>
+      <div class="chart-container"><canvas id="DHT22_Temp"></canvas></div>
+      <div class="chart-container"><canvas id="PT1000_Temp"></canvas></div>
+      <div class="chart-container"><canvas id="Rain"></canvas></div>
+      <div class="chart-container"><canvas id="SM1"></canvas></div>
+      <div class="chart-container"><canvas id="WindSpeed"></canvas></div>
+      <div class="chart-container"><canvas id="Soil1"></canvas></div>
+      <div class="chart-container"><canvas id="Soil3"></canvas></div>
+      <div class="chart-container"><canvas id="Temp1"></canvas></div>
+      <div class="chart-container"><canvas id="Temp2"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Firebase -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyDLjlDnZg9d9sJ2lCLUKGJ3pqbI_FHOB1Y",
+      authDomain: "rpi-to-esp.firebaseapp.com",
+      databaseURL: "https://rpi-to-esp-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "rpi-to-esp",
+      storageBucket: "rpi-to-esp.firebasestorage.app",
+      messagingSenderId: "430584609743",
+      appId: "1:430584609743:web:be81735fca8c403bcc30ba",
+      measurementId: "G-QPHK5018E3"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    // Sensors to plot (ignoring SoilMoisture2, Soil2, Soil4)
+    const sensorList = [
+      "BMP280_Pressure",
+      "BMP280_Temp",
+      "DHT22_Humidity",
+      "DHT22_Temp",
+      "PT1000_Temp",
+      "Rain",
+      "SM1",
+      "WindSpeed",
+      "Soil1",
+      "Soil3",
+      "Temp1",
+      "Temp2"
+    ];
+
+    // Store charts
+    const charts = {};
+
+    // Create chart for each sensor
+    function createChart(sensorId) {
+      const ctx = document.getElementById(sensorId).getContext("2d");
+      charts[sensorId] = new Chart(ctx, {
+        type: "line",
+        data: {
+          labels: [],
+          datasets: [{
+            label: sensorId,
+            data: [],
+            borderColor: "#2c7a7b",
+            backgroundColor: "rgba(44,122,123,0.2)",
+            tension: 0.3,
+            fill: true,
+            pointRadius: 3
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: { legend: { display: true } },
+          scales: {
+            x: { title: { display: true, text: "Date" } },
+            y: { title: { display: true, text: "Value" }, beginAtZero: false }
+          }
+        }
+      });
+    }
+
+    // Initialize charts
+    sensorList.forEach(sensor => createChart(sensor));
+
+    // Listen for updates
+    const sensorRef = ref(db, "sensor_readings");
+    onValue(sensorRef, (snapshot) => {
+      const data = snapshot.val();
+      if (!data) return;
+
+      const keys = Object.keys(data);
+
+      // Reset chart data
+      sensorList.forEach(sensor => {
+        charts[sensor].data.labels = [];
+        charts[sensor].data.datasets[0].data = [];
+      });
+
+      // Calculate cutoff date (7 days ago)
+      const now = new Date();
+      const sevenDaysAgo = now.getTime() - (7 * 24 * 60 * 60 * 1000);
+
+      // Store latest entry per day
+      const dailyLatest = {};
+
+      keys.forEach((key) => {
+        const entry = data[key];
+        const sensors = entry.PiSensors || {};
+        const slave = entry.Slave || {};
+        const timeStr = entry.timestamp || key;
+
+        const entryDate = new Date(timeStr);
+        if (isNaN(entryDate)) return;
+
+        // Skip if older than 7 days
+        if (entryDate.getTime() < sevenDaysAgo) return;
+
+        // Get YYYY-MM-DD
+        const dayKey = entryDate.toISOString().split("T")[0];
+
+        // Always overwrite with most recent
+        dailyLatest[dayKey] = { time: dayKey, sensors, slave };
+      });
+
+      // Plot only latest per day
+      Object.values(dailyLatest).forEach(({ time, sensors, slave }) => {
+        sensorList.forEach(sensor => {
+          let value = null;
+          if (sensors[sensor] !== undefined) value = sensors[sensor];
+          if (slave[sensor] !== undefined) value = slave[sensor];
+          if (value !== null) {
+            charts[sensor].data.labels.push(time);
+            charts[sensor].data.datasets[0].data.push(value);
+          }
+        });
+      });
+
+      // Update all charts
+      sensorList.forEach(sensor => charts[sensor].update());
+    });
+  </script>
+</body>
+</html>

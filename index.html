@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Krishisetu - Smart Farming App</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Firebase App (core SDK) -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js"></script>
+
+    <!-- Firebase Realtime Database -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js"></script>
+
+</head>
+<body>
+    <!-- Top Navigation Bar -->
+    <header class="top-bar">
+        <div class="logo-container">
+            <img src="https://via.placeholder.com/40" alt="Krishisetu Logo" class="app-logo">
+            <h1 class="app-name">Krishisetu</h1>
+        </div>
+        <div class="notification">
+            <i class="fas fa-bell notification-icon"></i>
+            <span class="notification-badge">3</span>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="content-area home-content">
+        <h2 class="welcome-text">Welcome to Krishisetu App</h2>
+        
+        <div class="card-container">
+            <div class="info-card weather-card">
+                <i class="fas fa-cloud-sun card-icon"></i>
+                <h3>Current Weather</h3>
+                <p class="card-value">28°C, Partly Cloudy</p>
+                <p class="card-desc">Perfect for irrigation</p>
+            </div>
+            
+            <div class="info-card irrigation-card">
+                <i class="fas fa-tint card-icon"></i>
+                <h3>Irrigation Tips</h3>
+                <p class="card-value">Optimal Time: Evening</p>
+                <p class="card-desc">Tap to see more details</p>
+            </div>
+            
+            <div class="info-card crop-card">
+                <i class="fas fa-seedling card-icon"></i>
+                <h3>Crop Health</h3>
+                <p class="card-value">Excellent</p>
+                <p class="card-desc">No issues detected</p>
+            </div>
+            
+            <div class="info-card market-card">
+                <i class="fas fa-store card-icon"></i>
+                <h3>Govt Subsidies</h3>
+                <p class="card-value">Trending Up ↑</p>
+                <p class="card-desc">Good time to grab opportuniity</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Bottom Navigation Bar -->
+    <nav class="bottom-nav">
+        <a href="index.html" class="nav-item active">
+            <i class="fas fa-home nav-icon"></i>
+            <span class="nav-text">Home</span>
+        </a>
+        <a href="readings.html" class="nav-item">
+            <i class="fas fa-chart-line nav-icon"></i>
+            <span class="nav-text">Readings</span>
+        </a>
+        <a href="plot.html" class="nav-item">
+            <i class="fas fa-leaf nav-icon"></i>
+            <span class="nav-text">View Plots</span>
+        </a>
+        <a href="profile.html" class="nav-item">
+            <i class="fas fa-user nav-icon"></i>
+            <span class="nav-text">Profile</span>
+        </a>
+    </nav>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+
+<script>
+  // Your Firebase configuration
+  const firebaseConfig = {
+  apiKey: "AIzaSyDaLkJsggXVevpz7HydAyn7EJStXqVeel0",
+  authDomain: "smart-irrigation-fb76f.firebaseapp.com",
+  databaseURL: "https://smart-irrigation-fb76f-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "smart-irrigation-fb76f",
+  storageBucket: "smart-irrigation-fb76f.firebasestorage.app",
+  messagingSenderId: "593054844124",
+  appId: "1:593054844124:web:c812d8d0bcba7216d9a019"
+};
+  
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+</script>
+    <script src="js/main.js"></script>
+</body>
+</html>

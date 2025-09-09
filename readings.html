@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Irrigation Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f4f8;
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
+    .container {
+      max-width: 1100px;
+      margin: auto;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #2c7a7b;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+    }
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 15px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      transition: transform 0.2s ease-in-out;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+    }
+    .card h2 {
+      font-size: 16px;
+      margin-bottom: 10px;
+      color: #2f855a;
+    }
+    .value {
+      font-size: 16px;
+      padding: 10px;
+      border-radius: 8px;
+      text-align: center;
+    }
+    .good {
+      background: #c6f6d5; /* light green */
+    }
+    .warn {
+      background: #fefcbf; /* light yellow */
+    }
+    .bad {
+      background: #fed7d7; /* light red */
+    }
+    .timestamp {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 14px;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🌱 Smart Irrigation Dashboard</h1>
+    <div id="timestamp" class="timestamp"></div>
+    <div id="sensor-grid" class="grid"></div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyDLjlDnZg9d9sJ2lCLUKGJ3pqbI_FHOB1Y",
+      authDomain: "rpi-to-esp.firebaseapp.com",
+      databaseURL: "https://rpi-to-esp-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "rpi-to-esp",
+      storageBucket: "rpi-to-esp.firebasestorage.app",
+      messagingSenderId: "430584609743",
+      appId: "1:430584609743:web:be81735fca8c403bcc30ba",
+      measurementId: "G-QPHK5018E3"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    const sensorRef = ref(db, "sensor_readings");
+
+    // Calibration quick fixes
+    function calibrate(sensor, value) {
+      if (value == null) return null;
+      switch (sensor) {
+        case "Soil1": return value * 0.8 + 5;
+        case "Soil2": return value * 0.9;
+        case "Soil3": return value * 1.1 - 3;
+        case "DHT22_Temp": return value - 2;
+        case "BMP280_Temp": return value - 1.5;
+        default: return value;
+      }
+    }
+
+    // Add color class
+    function classifyValue(type, value) {
+      if (value == null) return "";
+      if (type === "soil") {
+        if (value > 2000) return "bad";
+        if (value > 1000) return "warn";
+        return "good";
+      }
+      if (type === "temp") {
+        if (value > 35) return "bad";
+        if (value < 15) return "warn";
+        return "good";
+      }
+      return "";
+    }
+
+    // Render
+    onValue(sensorRef, (snapshot) => {
+      const data = snapshot.val();
+      if (!data) return;
+
+      const keys = Object.keys(data);
+      const latestKey = keys[keys.length - 1];
+      const latestData = data[latestKey];
+      const sensors = latestData.PiSensors || {};
+      const slave = latestData.Slave || {};
+      const timestamp = latestData.timestamp || "";
+
+      document.getElementById("timestamp").innerText = `📅 Latest Update: ${timestamp}`;
+
+      const grid = document.getElementById("sensor-grid");
+      grid.innerHTML = "";
+
+      const sensorList = [
+        { label: "BMP280 Pressure", value: sensors.BMP280_Pressure },
+        { label: "BMP280 Temp (°C)", value: calibrate("BMP280_Temp", sensors.BMP280_Temp), type: "temp" },
+        { label: "DHT22 Humidity (%)", value: sensors.DHT22_Humidity },
+        { label: "DHT22 Temp (°C)", value: calibrate("DHT22_Temp", sensors.DHT22_Temp), type: "temp" },
+        { label: "PT1000 Temp (°C)", value: sensors.PT1000_Temp, type: "temp" },
+        { label: "Rain", value: sensors.Rain },
+        { label: "Soil Moisture 1", value: sensors.SM1, type: "soil" },
+        { label: "Soil Moisture 2", value: sensors.SM2, type: "soil" },
+        { label: "Wind Speed", value: sensors.WindSpeed },
+        { label: "Soil1", value: calibrate("Soil1", slave.Soil1), type: "soil" },
+        { label: "Soil2", value: calibrate("Soil2", slave.Soil2), type: "soil" },
+        { label: "Soil3", value: calibrate("Soil3", slave.Soil3), type: "soil" },
+        { label: "Soil4", value: slave.Soil4, type: "soil" },
+        { label: "Slave Temp1 (°C)", value: slave.Temp1, type: "temp" },
+        { label: "Slave Temp2 (°C)", value: slave.Temp2, type: "temp" }
+      ];
+
+      sensorList.forEach(s => {
+        if (s.value == null) return;
+        const div = document.createElement("div");
+        div.className = "card";
+        div.innerHTML = `
+          <h2>${s.label}</h2>
+          <div class="value ${classifyValue(s.type, s.value)}">${s.value}</div>
+        `;
+        grid.appendChild(div);
+      });
+    });
+  </script>
+</body>
+</html>
