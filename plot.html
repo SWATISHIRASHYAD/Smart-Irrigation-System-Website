@@ -42,6 +42,9 @@
 <body>
   <div class="container">
     <h1>📊 Smart Irrigation Sensor Data (Last 7 Days)</h1>
+    <div class="chart-container" style="text-align: center; font-size: 1.5rem; padding: 20px;">
+    🌱 Latest Prediction: <span id="latestPrediction">Loading...</span>
+    </div>
     <div class="grid" id="charts">
       <div class="chart-container"><canvas id="BMP280_Pressure"></canvas></div>
       <div class="chart-container"><canvas id="BMP280_Temp"></canvas></div>
@@ -187,6 +190,21 @@
       // Update all charts
       sensorList.forEach(sensor => charts[sensor].update());
     });
+
+    const latestKey = keys[keys.length - 1];
+const latestEntry = data[latestKey];
+
+// Display the latest prediction
+if (latestEntry && latestEntry.prediction !== undefined) {
+    const prediction = latestEntry.prediction;
+    document.getElementById('latestPrediction').textContent = 
+        prediction === 1 
+            ? '🚨 Irrigation Needed!' 
+            : '✅ Irrigation Not Needed';
+    document.getElementById('latestPrediction').style.color = 
+        prediction === 1 ? 'red' : 'green';
+}
   </script>
 </body>
 </html>
+
