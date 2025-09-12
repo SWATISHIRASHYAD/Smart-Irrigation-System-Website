@@ -48,8 +48,8 @@
     <div class="grid" id="charts">
       <div class="chart-container"><canvas id="BMP280_Pressure"></canvas></div>
       <div class="chart-container"><canvas id="BMP280_Temp"></canvas></div>
-      <div class="chart-container"><canvas id="DHT22_Humidity"></canvas></div>
-      <div class="chart-container"><canvas id="DHT22_Temp"></canvas></div>
+      <div class="chart-container"><canvas id="DHT11_Humidity"></canvas></div>
+      <div class="chart-container"><canvas id="DHT11_Temp"></canvas></div>
       <div class="chart-container"><canvas id="PT1000_Temp"></canvas></div>
       <div class="chart-container"><canvas id="Rain"></canvas></div>
       <div class="chart-container"><canvas id="SM1"></canvas></div>
@@ -88,8 +88,8 @@
     const sensorList = [
       "BMP280_Pressure",
       "BMP280_Temp",
-      "DHT22_Humidity",
-      "DHT22_Temp",
+      "DHT11_Humidity",
+      "DHT11_Temp",
       "PT1000_Temp",
       "Rain",
       "SM1",
@@ -207,4 +207,5 @@ if (latestEntry && latestEntry.prediction !== undefined) {
   </script>
 </body>
 </html>
+
 
