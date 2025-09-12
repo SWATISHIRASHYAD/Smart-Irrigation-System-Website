@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Smart Irrigation - Sensor Plots</title>
   <style>
     body {
@@ -12,40 +13,61 @@
       padding: 0;
       color: #333;
     }
+
     .container {
       max-width: 1200px;
       margin: auto;
       padding: 20px;
     }
+
     h1 {
       text-align: center;
       margin-bottom: 20px;
       color: #2c7a7b;
     }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 20px;
+
+    .latest-prediction {
+      text-align: center;
+      font-size: 1.5rem;
+      padding: 20px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
     }
+
+    .charts {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+    }
+
     .chart-container {
       background: white;
       border-radius: 12px;
       padding: 15px;
       box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      flex: 1 1 300px;
+      min-width: 300px;
     }
+
     canvas {
       width: 100% !important;
-      height: 300px !important;
+      height: auto !important;
     }
   </style>
 </head>
+
 <body>
   <div class="container">
     <h1>📊 Smart Irrigation Sensor Data (Last 7 Days)</h1>
-    <div class="chart-container" style="text-align: center; font-size: 1.5rem; padding: 20px;">
-    🌱 Latest Prediction: <span id="latestPrediction">Loading...</span>
+
+    <div class="latest-prediction">
+      🌱 Latest Prediction: <span id="latestPrediction">Loading...</span>
     </div>
-    <div class="grid" id="charts">
+
+    <div class="charts" id="charts">
       <div class="chart-container"><canvas id="BMP280_Pressure"></canvas></div>
       <div class="chart-container"><canvas id="BMP280_Temp"></canvas></div>
       <div class="chart-container"><canvas id="DHT11_Humidity"></canvas></div>
@@ -63,12 +85,12 @@
 
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
   <!-- Firebase -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
     import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
 
-    // Firebase configuration
     const firebaseConfig = {
       apiKey: "AIzaSyDLjlDnZg9d9sJ2lCLUKGJ3pqbI_FHOB1Y",
       authDomain: "rpi-to-esp.firebaseapp.com",
@@ -80,11 +102,9 @@
       measurementId: "G-QPHK5018E3"
     };
 
-    // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    // Sensors to plot (ignoring SoilMoisture2, Soil2, Soil4)
     const sensorList = [
       "BMP280_Pressure",
       "BMP280_Temp",
@@ -100,28 +120,16 @@
       "Temp2"
     ];
 
-    // Store charts
     const charts = {};
 
-    // Create chart for each sensor
     function createChart(sensorId) {
       const ctx = document.getElementById(sensorId).getContext("2d");
       charts[sensorId] = new Chart(ctx, {
         type: "line",
-        data: {
-          labels: [],
-          datasets: [{
-            label: sensorId,
-            data: [],
-            borderColor: "#2c7a7b",
-            backgroundColor: "rgba(44,122,123,0.2)",
-            tension: 0.3,
-            fill: true,
-            pointRadius: 3
-          }]
-        },
+        data: { labels: [], datasets: [{ label: sensorId, data: [], borderColor: "#2c7a7b", backgroundColor: "rgba(44,122,123,0.2)", tension: 0.3, fill: true, pointRadius: 3 }] },
         options: {
           responsive: true,
+          maintainAspectRatio: false,
           plugins: { legend: { display: true } },
           scales: {
             x: { title: { display: true, text: "Date" } },
@@ -131,28 +139,40 @@
       });
     }
 
-    // Initialize charts
     sensorList.forEach(sensor => createChart(sensor));
 
-    // Listen for updates
+    function calibrateSoilReading(rawValue) {
+      const minRaw = 0;
+      const maxRaw = 3000;
+      rawValue = Math.max(minRaw, Math.min(maxRaw, rawValue));
+      return ((maxRaw - rawValue) / (maxRaw - minRaw) * 100).toFixed(1);
+    }
+
     const sensorRef = ref(db, "sensor_readings");
     onValue(sensorRef, (snapshot) => {
       const data = snapshot.val();
       if (!data) return;
 
       const keys = Object.keys(data);
+      if (keys.length === 0) return;
 
-      // Reset chart data
+      const latestKey = keys[keys.length - 1];
+      const latestEntry = data[latestKey];
+      if (latestEntry.prediction !== undefined) {
+        const prediction = latestEntry.prediction;
+        document.getElementById('latestPrediction').textContent =
+          prediction === 1 ? '🚨 Irrigation Needed!' : '✅ Irrigation Not Needed';
+        document.getElementById('latestPrediction').style.color =
+          prediction === 1 ? 'red' : 'green';
+      }
+
       sensorList.forEach(sensor => {
         charts[sensor].data.labels = [];
         charts[sensor].data.datasets[0].data = [];
       });
 
-      // Calculate cutoff date (7 days ago)
       const now = new Date();
       const sevenDaysAgo = now.getTime() - (7 * 24 * 60 * 60 * 1000);
-
-      // Store latest entry per day
       const dailyLatest = {};
 
       keys.forEach((key) => {
@@ -163,49 +183,31 @@
 
         const entryDate = new Date(timeStr);
         if (isNaN(entryDate)) return;
-
-        // Skip if older than 7 days
         if (entryDate.getTime() < sevenDaysAgo) return;
 
-        // Get YYYY-MM-DD
         const dayKey = entryDate.toISOString().split("T")[0];
-
-        // Always overwrite with most recent
         dailyLatest[dayKey] = { time: dayKey, sensors, slave };
       });
 
-      // Plot only latest per day
       Object.values(dailyLatest).forEach(({ time, sensors, slave }) => {
         sensorList.forEach(sensor => {
           let value = null;
           if (sensors[sensor] !== undefined) value = sensors[sensor];
           if (slave[sensor] !== undefined) value = slave[sensor];
+
           if (value !== null) {
+            if (['Soil1', 'Soil3'].includes(sensor)) {
+              value = calibrateSoilReading(value);
+            }
             charts[sensor].data.labels.push(time);
             charts[sensor].data.datasets[0].data.push(value);
           }
         });
       });
 
-      // Update all charts
       sensorList.forEach(sensor => charts[sensor].update());
     });
-
-    const latestKey = keys[keys.length - 1];
-const latestEntry = data[latestKey];
-
-// Display the latest prediction
-if (latestEntry && latestEntry.prediction !== undefined) {
-    const prediction = latestEntry.prediction;
-    document.getElementById('latestPrediction').textContent = 
-        prediction === 1 
-            ? '🚨 Irrigation Needed!' 
-            : '✅ Irrigation Not Needed';
-    document.getElementById('latestPrediction').style.color = 
-        prediction === 1 ? 'red' : 'green';
-}
   </script>
 </body>
+
 </html>
-
-
