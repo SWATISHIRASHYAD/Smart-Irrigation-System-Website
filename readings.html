@@ -267,7 +267,7 @@
           return 'critical';
         }
       },
-      'DHT22_Humidity': {
+      'DHT11_Humidity': {
         icon: '💧',
         title: 'Air Humidity',
         unit: '%',
@@ -278,7 +278,7 @@
           return 'warning';
         }
       },
-      'DHT22_Temp': {
+      'DHT11_Temp': {
         icon: '🌡️',
         title: 'DHT Temperature',
         unit: '°C',
@@ -461,7 +461,7 @@
       `;
 
       // Pi Sensors
-      const piSensorKeys = ['BMP280_Pressure', 'BMP280_Temp', 'DHT22_Humidity', 'DHT22_Temp', 'PT1000_Temp', 'Rain', 'SM1', 'SM2', 'WindSpeed'];
+      const piSensorKeys = ['BMP280_Pressure', 'BMP280_Temp', 'DHT11_Humidity', 'DHT11_Temp', 'PT1000_Temp', 'Rain', 'SM1', 'SM2', 'WindSpeed'];
       const piSensorsHTML = piSensorKeys.map(key => {
         const value = sensors[key];
         const config = sensorConfig[key];
@@ -488,3 +488,4 @@
   </script>
 </body>
 </html>
+
