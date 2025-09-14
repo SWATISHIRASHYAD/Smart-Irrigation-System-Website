@@ -463,29 +463,30 @@
       // Pi Sensors
       const piSensorKeys = ['BMP280_Pressure', 'BMP280_Temp', 'DHT11_Humidity', 'DHT11_Temp', 'PT1000_Temp', 'Rain', 'SM1', 'SM2', 'WindSpeed'];
       const piSensorsHTML = piSensorKeys.map(key => {
-        const value = sensors[key];
+        let value = sensors[key];
+        if (['SM1', 'SM2'].includes(key) && typeof value === 'number') {
+          value = value;
+        }
         const config = sensorConfig[key];
         return config ? createSensorCard(key, value, config) : '';
       }).join('');
 
       document.getElementById("pi-sensors").innerHTML = piSensorsHTML || '<div class="loading">No Pi sensor data available</div>';
 
-      // Slave Sensors
       const slaveSensorKeys = ['Soil1', 'Soil2', 'Soil3', 'Soil4', 'Temp1', 'Temp2'];
       const slaveSensorsHTML = slaveSensorKeys.map(key => {
-        const value = slave[key];
+        let value = slave[key];
+        if (['Soil1', 'Soil2', 'Soil3', 'Soil4'].includes(key)) {
+          value = calibrateSoilReading(Number(value));
+        }
         const config = sensorConfig[key];
         return config ? createSensorCard(key, value, config) : '';
       }).join('');
 
       document.getElementById("slave-sensors").innerHTML = slaveSensorsHTML || '<div class="loading">No slave sensor data available</div>';
-      
-      console.log('Pi Sensors Data:', sensors);
-      console.log('Slave Sensors Data:', slave);
-      console.log('Total Pi cards:', piSensorsHTML.split('sensor-card').length - 1);
-      console.log('Total Slave cards:', slaveSensorsHTML.split('sensor-card').length - 1);
     });
   </script>
 </body>
 </html>
+
 
