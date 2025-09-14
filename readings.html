@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="kn">
 
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Smart Irrigation Dashboard</title>
+  <title>ಸ್ಮಾರ್ಟ್ ಹೈಡ್ರೋಪೋನಿಕ್ಸ್ ಡ್ಯಾಶ್‌ಬೋರ್ಡ್</title>
   <style>
+    /* Same styles as before */
     * {
       margin: 0;
       padding: 0;
@@ -193,19 +194,19 @@
 <body>
   <div class="container">
     <div class="header">
-      <h1>🌱 Smart Irrigation Dashboard</h1>
-      <div class="subtitle">Real-time Agricultural Monitoring System</div>
+      <h1>🌱 ಸ್ಮಾರ್ಟ್ ಹೈಡ್ರೋಪೋನಿಕ್ಸ್ ಡ್ಯಾಶ್‌ಬೋರ್ಡ್</h1>
+      <div class="subtitle">ಯಥಾರ್ಥಕ ಕೃಷಿ ಮಾನಿಟರಿಂಗ್ ವ್ಯವಸ್ಥೆ</div>
     </div>
     
     <div id="timestamp-display" class="timestamp-card">
-      <h2>📅 Loading sensor data...</h2>
+      <h2>📅 ಸೆನ್ಸರ್ ಡೇಟಾವನ್ನು ಲೋಡ್ ಮಾಡಲಾಗುತ್ತಿದೆ...</h2>
     </div>
 
-    <div class="section-title">🥕 Raspberry Pi Sensors</div>
-    <div id="pi-sensors" class="sensors-grid loading">Loading Pi sensor data</div>
+    <div class="section-title">🥕 ರಾಸ್ಪ್ಬೆರಿ ಪೈ ಸೆನ್ಸರ್ಗಳು</div>
+    <div id="pi-sensors" class="sensors-grid loading">ರಾಸ್ಪ್ಬೆರಿ ಪೈ ಸೆನ್ಸರ್ ಡೇಟಾ ಲೋಡ್ ಆಗುತ್ತಿದೆ</div>
 
-    <div class="section-title">🌾 Slave Device Sensors</div>
-    <div id="slave-sensors" class="sensors-grid loading">Loading slave sensor data</div>
+    <div class="section-title">🌾 ಸ್ಲೇವ್ ಸಾಧನ ಸೆನ್ಸರ್ಗಳು</div>
+    <div id="slave-sensors" class="sensors-grid loading">ಸ್ಲೇವ್ ಸೆನ್ಸರ್ ಡೇಟಾ ಲೋಡ್ ಆಗುತ್ತಿದೆ</div>
   </div>
 
   <script type="module">
@@ -228,24 +229,23 @@
     const sensorRef = ref(db, "sensor_readings");
 
     const sensorConfig = {
-      'BMP280_Pressure': { icon: '🌪️', title: 'Atmospheric Pressure', unit: 'hPa', classify: (v) => v > 1030 ? 'excellent' : v > 1000 ? 'good' : v > 980 ? 'moderate' : 'warning' },
-      'BMP280_Temp': { icon: '🌡️', title: 'BMP Temperature', unit: '°C', classify: (v) => (v >= 20 && v <= 28) ? 'excellent' : (v >= 15 && v <= 35) ? 'good' : (v >= 10 && v <= 40) ? 'moderate' : (v >= 5 && v <= 45) ? 'warning' : 'critical' },
-      'DHT11_Humidity': { icon: '💧', title: 'Air Humidity', unit: '%', classify: (v) => (v >= 40 && v <= 60) ? 'excellent' : (v >= 30 && v <= 70) ? 'good' : (v >= 20 && v <= 80) ? 'moderate' : 'warning' },
-      'DHT11_Temp': { icon: '🌡️', title: 'DHT Temperature', unit: '°C', classify: (v) => (v >= 20 && v <= 28) ? 'excellent' : (v >= 15 && v <= 35) ? 'good' : (v >= 10 && v <= 40) ? 'moderate' : (v >= 5 && v <= 45) ? 'warning' : 'critical' },
-      'PT1000_Temp': { icon: '🔥', title: 'PT1000 Temperature', unit: '°C', classify: (v) => (v >= 20 && v <= 28) ? 'excellent' : (v >= 15 && v <= 35) ? 'good' : (v >= 10 && v <= 40) ? 'moderate' : (v >= 5 && v <= 45) ? 'warning' : 'critical' },
-      'Rain': { icon: '🌧️', title: 'Rain Detection', unit: '', classify: (v) => v === 0 ? 'excellent' : v <= 10 ? 'good' : v <= 50 ? 'moderate' : 'warning' },
-      'SM1': { icon: '🌱', title: 'Soil Moisture 1', unit: '%', classify: (v) => v >= 70 ? 'excellent' : v >= 50 ? 'good' : v >= 30 ? 'moderate' : v >= 10 ? 'warning' : 'critical' },
-      'SM2': { icon: '🌿', title: 'Soil Moisture 2', unit: '%', classify: (v) => v >= 70 ? 'excellent' : v >= 50 ? 'good' : v >= 30 ? 'moderate' : v >= 10 ? 'warning' : 'critical' },
-      'WindSpeed': { icon: '💨', title: 'Wind Speed', unit: 'm/s', classify: (v) => v <= 5 ? 'excellent' : v <= 15 ? 'good' : v <= 25 ? 'moderate' : v <= 35 ? 'warning' : 'critical' },
-      'Soil1': { icon: '🌾', title: 'Field Soil 1', unit: '%', classify: (v) => v >= 70 ? 'excellent' : v >= 50 ? 'good' : v >= 30 ? 'moderate' : v >= 10 ? 'warning' : 'critical' },
-      'Soil2': { icon: '🌽', title: 'Field Soil 2', unit: '%', classify: (v) => v >= 70 ? 'excellent' : v >= 50 ? 'good' : v >= 30 ? 'moderate' : v >= 10 ? 'warning' : 'critical' },
-      'Soil3': { icon: '🥬', title: 'Field Soil 3', unit: '%', classify: (v) => v >= 70 ? 'excellent' : v >= 50 ? 'good' : v >= 30 ? 'moderate' : v >= 10 ? 'warning' : 'critical' },
-      'Soil4': { icon: '🥕', title: 'Field Soil 4', unit: '%', classify: (v) => v >= 70 ? 'excellent' : v >= 50 ? 'good' : v >= 30 ? 'moderate' : v >= 10 ? 'warning' : 'critical' },
-      'Temp1': { icon: '🌡️', title: 'Field Temperature 1', unit: '°C', classify: (v) => (v >= 20 && v <= 28) ? 'excellent' : (v >= 15 && v <= 35) ? 'good' : (v >= 10 && v <= 40) ? 'moderate' : (v >= 5 && v <= 45) ? 'warning' : 'critical' },
-      'Temp2': { icon: '🌡️', title: 'Field Temperature 2', unit: '°C', classify: (v) => (v >= 20 && v <= 28) ? 'excellent' : (v >= 15 && v <= 35) ? 'good' : (v >= 10 && v <= 40) ? 'moderate' : (v >= 5 && v <= 45) ? 'warning' : 'critical' }
+      'BMP280_Pressure': { icon: '🌪️', title: 'ವಾತಾವರಣದ ಒತ್ತಡ', unit: 'hPa', classify: (v) => v > 1030 ? 'excellent' : v > 1000 ? 'good' : v > 980 ? 'moderate' : 'warning' },
+      'BMP280_Temp': { icon: '🌡️', title: 'BMP ತಾಪಮಾನ', unit: '°C', classify: (v) => (v >= 20 && v <= 28) ? 'excellent' : (v >= 15 && v <= 35) ? 'good' : (v >= 10 && v <= 40) ? 'moderate' : (v >= 5 && v <= 45) ? 'warning' : 'critical' },
+      'DHT11_Humidity': { icon: '💧', title: 'ಹವಾಮಾನ ಆರ್ದ್ರತೆ', unit: '%', classify: (v) => (v >= 40 && v <= 60) ? 'excellent' : (v >= 30 && v <= 70) ? 'good' : (v >= 20 && v <= 80) ? 'moderate' : 'warning' },
+      'DHT11_Temp': { icon: '🌡️', title: 'DHT ತಾಪಮಾನ', unit: '°C', classify: (v) => (v >= 20 && v <= 28) ? 'excellent' : (v >= 15 && v <= 35) ? 'good' : (v >= 10 && v <= 40) ? 'moderate' : (v >= 5 && v <= 45) ? 'warning' : 'critical' },
+      'PT1000_Temp': { icon: '🔥', title: 'PT1000 ತಾಪಮಾನ', unit: '°C', classify: (v) => (v >= 20 && v <= 28) ? 'excellent' : (v >= 15 && v <= 35) ? 'good' : (v >= 10 && v <= 40) ? 'moderate' : (v >= 5 && v <= 45) ? 'warning' : 'critical' },
+      'Rain': { icon: '🌧️', title: 'ಮಳೆ ಪತ್ತೆ', unit: '', classify: (v) => v === 0 ? 'excellent' : v <= 10 ? 'good' : v <= 50 ? 'moderate' : 'warning' },
+      'SM1': { icon: '🌱', title: 'ಮಣ್ಣು ಆರ್ದ್ರತೆ 1', unit: '%', classify: (v) => v >= 70 ? 'excellent' : v >= 50 ? 'good' : v >= 30 ? 'moderate' : v >= 10 ? 'warning' : 'critical' },
+      'SM2': { icon: '🌿', title: 'ಮಣ್ಣು ಆರ್ದ್ರತೆ 2', unit: '%', classify: (v) => v >= 70 ? 'excellent' : v >= 50 ? 'good' : v >= 30 ? 'moderate' : v >= 10 ? 'warning' : 'critical' },
+      'WindSpeed': { icon: '💨', title: 'ಗಾಳಿಯ ವೇಗ', unit: 'm/s', classify: (v) => v <= 5 ? 'excellent' : v <= 15 ? 'good' : v <= 25 ? 'moderate' : v <= 35 ? 'warning' : 'critical' },
+      'Soil1': { icon: '🌾', title: 'ಕ್ಷೇತ್ರ ಮಣ್ಣು 1', unit: '%', classify: (v) => v >= 70 ? 'excellent' : v >= 50 ? 'good' : v >= 30 ? 'moderate' : v >= 10 ? 'warning' : 'critical' },
+      'Soil2': { icon: '🌽', title: 'ಕ್ಷೇತ್ರ ಮಣ್ಣು 2', unit: '%', classify: (v) => v >= 70 ? 'excellent' : v >= 50 ? 'good' : v >= 30 ? 'moderate' : v >= 10 ? 'warning' : 'critical' },
+      'Soil3': { icon: '🥬', title: 'ಕ್ಷೇತ್ರ ಮಣ್ಣು 3', unit: '%', classify: (v) => v >= 70 ? 'excellent' : v >= 50 ? 'good' : v >= 30 ? 'moderate' : v >= 10 ? 'warning' : 'critical' },
+      'Soil4': { icon: '🥕', title: 'ಕ್ಷೇತ್ರ ಮಣ್ಣು 4', unit: '%', classify: (v) => v >= 70 ? 'excellent' : v >= 50 ? 'good' : v >= 30 ? 'moderate' : v >= 10 ? 'warning' : 'critical' },
+      'Temp1': { icon: '🌡️', title: 'ಕ್ಷೇತ್ರ ತಾಪಮಾನ 1', unit: '°C', classify: (v) => (v >= 20 && v <= 28) ? 'excellent' : (v >= 15 && v <= 35) ? 'good' : (v >= 10 && v <= 40) ? 'moderate' : (v >= 5 && v <= 45) ? 'warning' : 'critical' },
+      'Temp2': { icon: '🌡️', title: 'ಕ್ಷೇತ್ರ ತಾಪಮಾನ 2', unit: '°C', classify: (v) => (v >= 20 && v <= 28) ? 'excellent' : (v >= 15 && v <= 35) ? 'good' : (v >= 10 && v <= 40) ? 'moderate' : (v >= 5 && v <= 45) ? 'warning' : 'critical' }
     };
 
-    // Updated calibration function: 0-3000 -> 0-100%
     function calibrateSoilReading(rawValue) {
       return (rawValue /1000);
     }
@@ -278,8 +278,8 @@
       const timestamp = latestData.timestamp || "";
 
       document.getElementById("timestamp-display").innerHTML = `
-        <h2>📅 Last Updated: ${timestamp}</h2>
-        <div>System Status: <span style="color: #00f260;">● Online</span></div>
+        <h2>📅 ಕೊನೆ ಅಪ್ಡೇಟ್: ${timestamp}</h2>
+        <div>ವ್ಯವಸ್ಥೆ ಸ್ಥಿತಿ: <span style="color: #00f260;">● ಆನ್‌ಲೈನ್</span></div>
       `;
 
       const piSensorKeys = ['BMP280_Pressure', 'BMP280_Temp', 'DHT11_Humidity', 'DHT11_Temp', 'PT1000_Temp', 'Rain', 'SM1', 'SM2', 'WindSpeed'];
@@ -292,7 +292,7 @@
         return config ? createSensorCard(key, value, config) : '';
       }).join('');
 
-      document.getElementById("pi-sensors").innerHTML = piSensorsHTML || '<div class="loading">No Pi sensor data available</div>';
+      document.getElementById("pi-sensors").innerHTML = piSensorsHTML || '<div class="loading">ರಾಸ್ಪ್ಬೆರಿ ಪೈ ಸೆನ್ಸರ್ ಡೇಟಾ ಲಭ್ಯವಿಲ್ಲ</div>';
 
       const slaveSensorKeys = ['Soil1', 'Soil2', 'Soil3', 'Soil4', 'Temp1', 'Temp2'];
       const slaveSensorsHTML = slaveSensorKeys.map(key => {
@@ -304,7 +304,7 @@
         return config ? createSensorCard(key, value, config) : '';
       }).join('');
 
-      document.getElementById("slave-sensors").innerHTML = slaveSensorsHTML || '<div class="loading">No slave sensor data available</div>';
+      document.getElementById("slave-sensors").innerHTML = slaveSensorsHTML || '<div class="loading">ಸ್ಲೇವ್ ಸೆನ್ಸರ್ ಡೇಟಾ ಲಭ್ಯವಿಲ್ಲ</div>';
     });
   </script>
 </body>
