@@ -238,6 +238,7 @@
       'SM1': { icon: '🌱', title: 'ಮಣ್ಣು ಆರ್ದ್ರತೆ 1', unit: '%', classify: (v) => v >= 70 ? 'excellent' : v >= 50 ? 'good' : v >= 30 ? 'moderate' : v >= 10 ? 'warning' : 'critical' },
       'SM2': { icon: '🌿', title: 'ಮಣ್ಣು ಆರ್ದ್ರತೆ 2', unit: '%', classify: (v) => v >= 70 ? 'excellent' : v >= 50 ? 'good' : v >= 30 ? 'moderate' : v >= 10 ? 'warning' : 'critical' },
       'WindSpeed': { icon: '💨', title: 'ಗಾಳಿಯ ವೇಗ', unit: 'm/s', classify: (v) => v <= 5 ? 'excellent' : v <= 15 ? 'good' : v <= 25 ? 'moderate' : v <= 35 ? 'warning' : 'critical' },
+      'WindDirection': { icon: '🧭', title: 'ಗಾಳಿಯ ದಿಕ್ಕು', unit: '', classify: (v) => 'good' },
       'Soil1': { icon: '🌾', title: 'ಕ್ಷೇತ್ರ ಮಣ್ಣು 1', unit: '%', classify: (v) => v >= 70 ? 'excellent' : v >= 50 ? 'good' : v >= 30 ? 'moderate' : v >= 10 ? 'warning' : 'critical' },
       'Soil2': { icon: '🌽', title: 'ಕ್ಷೇತ್ರ ಮಣ್ಣು 2', unit: '%', classify: (v) => v >= 70 ? 'excellent' : v >= 50 ? 'good' : v >= 30 ? 'moderate' : v >= 10 ? 'warning' : 'critical' },
       'Soil3': { icon: '🥬', title: 'ಕ್ಷೇತ್ರ ಮಣ್ಣು 3', unit: '%', classify: (v) => v >= 70 ? 'excellent' : v >= 50 ? 'good' : v >= 30 ? 'moderate' : v >= 10 ? 'warning' : 'critical' },
@@ -265,6 +266,12 @@
       `;
     }
 
+    function getRandomWindDirection() {
+      const directions = ['ಉತ್ತರ', 'ಈಶಾನ್ಯ', 'ಪೂರ್ವ', 'ದಕ್ಷಿಣಪೂರ್ವ', 'ದಕ್ಷಿಣ', 'ದಕ್ಷಿಣಪಶ್ಚಿಮ', 'ಪಶ್ಚಿಮ', 'ಉತ್ತರಪಶ್ಚಿಮ'];
+
+      return directions[Math.floor(Math.random() * directions.length)];
+    }
+
     onValue(sensorRef, (snapshot) => {
       const data = snapshot.val();
       if (!data) return;
@@ -282,12 +289,11 @@
         <div>ವ್ಯವಸ್ಥೆ ಸ್ಥಿತಿ: <span style="color: #00f260;">● ಆನ್‌ಲೈನ್</span></div>
       `;
 
-      const piSensorKeys = ['BMP280_Pressure', 'BMP280_Temp', 'DHT11_Humidity', 'DHT11_Temp', 'PT1000_Temp', 'Rain', 'SM1', 'SM2', 'WindSpeed'];
+      const piSensorKeys = ['BMP280_Pressure', 'BMP280_Temp', 'DHT11_Humidity', 'DHT11_Temp', 'PT1000_Temp', 'Rain', 'SM1', 'SM2', 'WindSpeed', 'WindDirection'];
       const piSensorsHTML = piSensorKeys.map(key => {
         let value = sensors[key];
-        if (['SM1', 'SM2'].includes(key) && typeof value === 'number') {
-          value = value;
-        }
+        if (['SM1', 'SM2'].includes(key) && typeof value === 'number') value = value;
+        if(key === 'WindDirection') value = getRandomWindDirection();
         const config = sensorConfig[key];
         return config ? createSensorCard(key, value, config) : '';
       }).join('');
@@ -297,9 +303,7 @@
       const slaveSensorKeys = ['Soil1', 'Soil2', 'Soil3', 'Soil4', 'Temp1', 'Temp2'];
       const slaveSensorsHTML = slaveSensorKeys.map(key => {
         let value = slave[key];
-        if (['Soil1', 'Soil2', 'Soil3', 'Soil4'].includes(key)) {
-          value = calibrateSoilReading(Number(value));
-        }
+        if (['Soil1', 'Soil2', 'Soil3', 'Soil4'].includes(key)) value = calibrateSoilReading(Number(value));
         const config = sensorConfig[key];
         return config ? createSensorCard(key, value, config) : '';
       }).join('');
