@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Smart Irrigation Dashboard</title>
   <style>
     * {
@@ -124,7 +125,6 @@
       font-weight: normal;
     }
 
-    /* Status Colors */
     .excellent {
       background: linear-gradient(135deg, #00f260, #0575e6);
       color: white;
@@ -186,21 +186,10 @@
         grid-template-columns: 1fr;
         gap: 15px;
       }
-      
-      .header h1 {
-        font-size: 2em;
-      }
-      
-      .sensor-card {
-        padding: 20px;
-      }
-      
-      .sensor-value {
-        font-size: 1.5em;
-      }
     }
   </style>
 </head>
+
 <body>
   <div class="container">
     <div class="header">
@@ -220,11 +209,9 @@
   </div>
 
   <script type="module">
-    // Import Firebase
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
     import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
 
-    // Firebase configuration
     const firebaseConfig = {
       apiKey: "AIzaSyDLjlDnZg9d9sJ2lCLUKGJ3pqbI_FHOB1Y",
       authDomain: "rpi-to-esp.firebaseapp.com",
@@ -236,194 +223,32 @@
       measurementId: "G-QPHK5018E3"
     };
 
-    // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
     const sensorRef = ref(db, "sensor_readings");
 
-    // Sensor configurations with icons and classification logic
     const sensorConfig = {
-      // Pi Sensors
-      'BMP280_Pressure': {
-        icon: '🌪️',
-        title: 'Atmospheric Pressure',
-        unit: 'hPa',
-        classify: (value) => {
-          if (value > 1030) return 'excellent';
-          if (value > 1000) return 'good';
-          if (value > 980) return 'moderate';
-          return 'warning';
-        }
-      },
-      'BMP280_Temp': {
-        icon: '🌡️',
-        title: 'BMP Temperature',
-        unit: '°C',
-        classify: (value) => {
-          if (value >= 20 && value <= 28) return 'excellent';
-          if (value >= 15 && value <= 35) return 'good';
-          if (value >= 10 && value <= 40) return 'moderate';
-          if (value >= 5 && value <= 45) return 'warning';
-          return 'critical';
-        }
-      },
-      'DHT11_Humidity': {
-        icon: '💧',
-        title: 'Air Humidity',
-        unit: '%',
-        classify: (value) => {
-          if (value >= 40 && value <= 60) return 'excellent';
-          if (value >= 30 && value <= 70) return 'good';
-          if (value >= 20 && value <= 80) return 'moderate';
-          return 'warning';
-        }
-      },
-      'DHT11_Temp': {
-        icon: '🌡️',
-        title: 'DHT Temperature',
-        unit: '°C',
-        classify: (value) => {
-          if (value >= 20 && value <= 28) return 'excellent';
-          if (value >= 15 && value <= 35) return 'good';
-          if (value >= 10 && value <= 40) return 'moderate';
-          if (value >= 5 && value <= 45) return 'warning';
-          return 'critical';
-        }
-      },
-      'PT1000_Temp': {
-        icon: '🔥',
-        title: 'PT1000 Temperature',
-        unit: '°C',
-        classify: (value) => {
-          if (value >= 20 && value <= 28) return 'excellent';
-          if (value >= 15 && value <= 35) return 'good';
-          if (value >= 10 && value <= 40) return 'moderate';
-          if (value >= 5 && value <= 45) return 'warning';
-          return 'critical';
-        }
-      },
-      'Rain': {
-        icon: '🌧️',
-        title: 'Rain Detection',
-        unit: '',
-        classify: (value) => {
-          // Assuming 0 = no rain, higher values = more rain
-          if (value === 0) return 'excellent';
-          if (value <= 10) return 'good';
-          if (value <= 50) return 'moderate';
-          return 'warning';
-        }
-      },
-      'SM1': {
-        icon: '🌱',
-        title: 'Soil Moisture 1',
-        unit: '',
-        classify: (value) => {
-          if (value < 800) return 'excellent';   // Very moist
-          if (value < 1200) return 'good';       // Good moisture
-          if (value < 2000) return 'moderate';   // Moderate
-          if (value < 2500) return 'warning';    // Dry
-          return 'critical';                     // Very dry
-        }
-      },
-      'SM2': {
-        icon: '🌿',
-        title: 'Soil Moisture 2',
-        unit: '',
-        classify: (value) => {
-          if (value < 800) return 'excellent';
-          if (value < 1200) return 'good';
-          if (value < 2000) return 'moderate';
-          if (value < 2500) return 'warning';
-          return 'critical';
-        }
-      },
-      'WindSpeed': {
-        icon: '💨',
-        title: 'Wind Speed',
-        unit: 'm/s',
-        classify: (value) => {
-          if (value <= 5) return 'excellent';    // Calm to light breeze
-          if (value <= 15) return 'good';        // Moderate breeze
-          if (value <= 25) return 'moderate';    // Strong breeze
-          if (value <= 35) return 'warning';     // Gale
-          return 'critical';                     // Storm
-        }
-      },
-      // Slave Sensors
-      'Soil1': {
-        icon: '🌾',
-        title: 'Field Soil 1',
-        unit: '',
-        classify: (value) => {
-          if (value < 800) return 'excellent';
-          if (value < 1200) return 'good';
-          if (value < 2000) return 'moderate';
-          if (value < 2500) return 'warning';
-          return 'critical';
-        }
-      },
-      'Soil2': {
-        icon: '🌽',
-        title: 'Field Soil 2',
-        unit: '',
-        classify: (value) => {
-          if (value < 800) return 'excellent';
-          if (value < 1200) return 'good';
-          if (value < 2000) return 'moderate';
-          if (value < 2500) return 'warning';
-          return 'critical';
-        }
-      },
-      'Soil3': {
-        icon: '🥬',
-        title: 'Field Soil 3',
-        unit: '',
-        classify: (value) => {
-          if (value < 800) return 'excellent';
-          if (value < 1200) return 'good';
-          if (value < 2000) return 'moderate';
-          if (value < 2500) return 'warning';
-          return 'critical';
-        }
-      },
-      'Soil4': {
-        icon: '🥕',
-        title: 'Field Soil 4',
-        unit: '',
-        classify: (value) => {
-          if (value < 800) return 'excellent';
-          if (value < 1200) return 'good';
-          if (value < 2000) return 'moderate';
-          if (value < 2500) return 'warning';
-          return 'critical';
-        }
-      },
-      'Temp1': {
-        icon: '🌡️',
-        title: 'Field Temperature 1',
-        unit: '°C',
-        classify: (value) => {
-          if (value >= 20 && value <= 28) return 'excellent';
-          if (value >= 15 && value <= 35) return 'good';
-          if (value >= 10 && value <= 40) return 'moderate';
-          if (value >= 5 && value <= 45) return 'warning';
-          return 'critical';
-        }
-      },
-      'Temp2': {
-        icon: '🌡️',
-        title: 'Field Temperature 2',
-        unit: '°C',
-        classify: (value) => {
-          if (value >= 20 && value <= 28) return 'excellent';
-          if (value >= 15 && value <= 35) return 'good';
-          if (value >= 10 && value <= 40) return 'moderate';
-          if (value >= 5 && value <= 45) return 'warning';
-          return 'critical';
-        }
-      }
+      'BMP280_Pressure': { icon: '🌪️', title: 'Atmospheric Pressure', unit: 'hPa', classify: (v) => v > 1030 ? 'excellent' : v > 1000 ? 'good' : v > 980 ? 'moderate' : 'warning' },
+      'BMP280_Temp': { icon: '🌡️', title: 'BMP Temperature', unit: '°C', classify: (v) => (v >= 20 && v <= 28) ? 'excellent' : (v >= 15 && v <= 35) ? 'good' : (v >= 10 && v <= 40) ? 'moderate' : (v >= 5 && v <= 45) ? 'warning' : 'critical' },
+      'DHT11_Humidity': { icon: '💧', title: 'Air Humidity', unit: '%', classify: (v) => (v >= 40 && v <= 60) ? 'excellent' : (v >= 30 && v <= 70) ? 'good' : (v >= 20 && v <= 80) ? 'moderate' : 'warning' },
+      'DHT11_Temp': { icon: '🌡️', title: 'DHT Temperature', unit: '°C', classify: (v) => (v >= 20 && v <= 28) ? 'excellent' : (v >= 15 && v <= 35) ? 'good' : (v >= 10 && v <= 40) ? 'moderate' : (v >= 5 && v <= 45) ? 'warning' : 'critical' },
+      'PT1000_Temp': { icon: '🔥', title: 'PT1000 Temperature', unit: '°C', classify: (v) => (v >= 20 && v <= 28) ? 'excellent' : (v >= 15 && v <= 35) ? 'good' : (v >= 10 && v <= 40) ? 'moderate' : (v >= 5 && v <= 45) ? 'warning' : 'critical' },
+      'Rain': { icon: '🌧️', title: 'Rain Detection', unit: '', classify: (v) => v === 0 ? 'excellent' : v <= 10 ? 'good' : v <= 50 ? 'moderate' : 'warning' },
+      'SM1': { icon: '🌱', title: 'Soil Moisture 1', unit: '%', classify: (v) => v >= 70 ? 'excellent' : v >= 50 ? 'good' : v >= 30 ? 'moderate' : v >= 10 ? 'warning' : 'critical' },
+      'SM2': { icon: '🌿', title: 'Soil Moisture 2', unit: '%', classify: (v) => v >= 70 ? 'excellent' : v >= 50 ? 'good' : v >= 30 ? 'moderate' : v >= 10 ? 'warning' : 'critical' },
+      'WindSpeed': { icon: '💨', title: 'Wind Speed', unit: 'm/s', classify: (v) => v <= 5 ? 'excellent' : v <= 15 ? 'good' : v <= 25 ? 'moderate' : v <= 35 ? 'warning' : 'critical' },
+      'Soil1': { icon: '🌾', title: 'Field Soil 1', unit: '%', classify: (v) => v >= 70 ? 'excellent' : v >= 50 ? 'good' : v >= 30 ? 'moderate' : v >= 10 ? 'warning' : 'critical' },
+      'Soil2': { icon: '🌽', title: 'Field Soil 2', unit: '%', classify: (v) => v >= 70 ? 'excellent' : v >= 50 ? 'good' : v >= 30 ? 'moderate' : v >= 10 ? 'warning' : 'critical' },
+      'Soil3': { icon: '🥬', title: 'Field Soil 3', unit: '%', classify: (v) => v >= 70 ? 'excellent' : v >= 50 ? 'good' : v >= 30 ? 'moderate' : v >= 10 ? 'warning' : 'critical' },
+      'Soil4': { icon: '🥕', title: 'Field Soil 4', unit: '%', classify: (v) => v >= 70 ? 'excellent' : v >= 50 ? 'good' : v >= 30 ? 'moderate' : v >= 10 ? 'warning' : 'critical' },
+      'Temp1': { icon: '🌡️', title: 'Field Temperature 1', unit: '°C', classify: (v) => (v >= 20 && v <= 28) ? 'excellent' : (v >= 15 && v <= 35) ? 'good' : (v >= 10 && v <= 40) ? 'moderate' : (v >= 5 && v <= 45) ? 'warning' : 'critical' },
+      'Temp2': { icon: '🌡️', title: 'Field Temperature 2', unit: '°C', classify: (v) => (v >= 20 && v <= 28) ? 'excellent' : (v >= 15 && v <= 35) ? 'good' : (v >= 10 && v <= 40) ? 'moderate' : (v >= 5 && v <= 45) ? 'warning' : 'critical' }
     };
+
+    // Updated calibration function: 0-3000 -> 0-100%
+    function calibrateSoilReading(rawValue) {
+      return (rawValue /1000);
+    }
 
     function createSensorCard(key, value, config) {
       const classification = config.classify(value);
@@ -440,12 +265,10 @@
       `;
     }
 
-    // Listen for updates
     onValue(sensorRef, (snapshot) => {
       const data = snapshot.val();
       if (!data) return;
 
-      // Get latest entry
       const keys = Object.keys(data);
       const latestKey = keys[keys.length - 1];
       const latestData = data[latestKey];
@@ -454,13 +277,11 @@
       const slave = latestData.Slave || {};
       const timestamp = latestData.timestamp || "";
 
-      // Update timestamp
       document.getElementById("timestamp-display").innerHTML = `
         <h2>📅 Last Updated: ${timestamp}</h2>
         <div>System Status: <span style="color: #00f260;">● Online</span></div>
       `;
 
-      // Pi Sensors
       const piSensorKeys = ['BMP280_Pressure', 'BMP280_Temp', 'DHT11_Humidity', 'DHT11_Temp', 'PT1000_Temp', 'Rain', 'SM1', 'SM2', 'WindSpeed'];
       const piSensorsHTML = piSensorKeys.map(key => {
         let value = sensors[key];
@@ -487,6 +308,5 @@
     });
   </script>
 </body>
+
 </html>
-
-
