@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="kn">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Smart Agriculture - Farmer Registration</title>
+  <title>ಸ್ಮಾರ್ಟ್ ಕೃಷಿ - ರೈತ ನೋಂದಣಿ</title>
   <style>
     * {
       margin: 0;
@@ -19,7 +19,6 @@
       position: relative;
     }
     
-    /* Background pattern overlay */
     body::before {
       content: '';
       position: absolute;
@@ -226,7 +225,6 @@
       }
     }
     
-    /* Loading animation */
     .loading {
       pointer-events: none;
       opacity: 0.7;
@@ -236,7 +234,6 @@
       background: #bdc3c7;
     }
     
-    /* Success animation */
     @keyframes successPulse {
       0% { transform: scale(1); }
       50% { transform: scale(1.05); }
@@ -254,99 +251,97 @@
     <div class="form-wrapper" id="formWrapper">
       <div class="header">
         <div class="logo">🌾</div>
-        <h1>Farmer Registration</h1>
-        <p class="subtitle">Join our smart agriculture platform and grow smarter</p>
+        <h1>ರೈತ ನೋಂದಣಿ</h1>
+        <p class="subtitle">ನಮ್ಮ ಸ್ಮಾರ್ಟ್ ಕೃಷಿ ವೇದಿಕೆಗೆ ಸೇರಿ, ಬುದ್ಧಿವಂತವಾಗಿ ಬೆಳೆಯಿರಿ</p>
         
         <div class="features">
           <div class="feature">
             <span class="feature-icon">📊</span>
-            <span class="feature-text">Smart Analytics</span>
+            <span class="feature-text">ಸ್ಮಾರ್ಟ್ ವಿಶ್ಲೇಷಣೆ</span>
           </div>
           <div class="feature">
             <span class="feature-icon">🌡️</span>
-            <span class="feature-text">Weather Insights</span>
+            <span class="feature-text">ಹವಾಮಾನ ಮಾಹಿತಿ</span>
           </div>
           <div class="feature">
             <span class="feature-icon">💧</span>
-            <span class="feature-text">Irrigation Control</span>
+            <span class="feature-text">ನೀರು ನಿಯಂತ್ರಣ</span>
           </div>
         </div>
       </div>
 
       <form id="registerForm" class="form-grid">
         <div class="form-group full-width">
-          <label>👤 Full Name</label>
-          <input type="text" id="name" required placeholder="Enter your full name" />
+          <label>👤 ಸಂಪೂರ್ಣ ಹೆಸರು</label>
+          <input type="text" id="name" required placeholder="ನಿಮ್ಮ ಸಂಪೂರ್ಣ ಹೆಸರು ನಮೂದಿಸಿ" />
         </div>
 
         <div class="form-group full-width">
-          <label>👤 Email</label>
-          <input type="email" id="email" required placeholder="Enter your email id" />
+          <label>📧 ಇಮೇಲ್</label>
+          <input type="email" id="email" required placeholder="ನಿಮ್ಮ ಇಮೇಲ್ ನಮೂದಿಸಿ" />
         </div>
 
         <div class="form-row">
           <div class="form-group">
-            <label>📱 Phone Number</label>
-            <input type="tel" id="phone" pattern="[0-9]{10}" required placeholder="10-digit number" />
+            <label>📱 ಮೊಬೈಲ್ ಸಂಖ್ಯೆ</label>
+            <input type="tel" id="phone" pattern="[0-9]{10}" required placeholder="10-ಅಂಕಿ ಸಂಖ್ಯೆ" />
           </div>
           <div class="form-group">
-            <label>🔐 Password</label>
-            <input type="password" id="password" required placeholder="Create password" />
+            <label>🔐 ಪಾಸ್‌ವರ್ಡ್</label>
+            <input type="password" id="password" required placeholder="ಪಾಸ್‌ವರ್ಡ್ ರಚಿಸಿ" />
           </div>
         </div>
 
         <div class="form-row">
           <div class="form-group">
-            <label>🌱 Primary Crop</label>
-            <input type="text" id="crop" required placeholder="e.g., Rice, Wheat, Cotton" />
+            <label>🌱 ಪ್ರಾಥಮಿಕ ಬೆಳೆ</label>
+            <input type="text" id="crop" required placeholder="ಉದಾ., ಅನ್ನ, ಗೋದಿ, ಹತ್ತಿ" />
           </div>
           <div class="form-group">
-            <label>📅 Crop Start Date</label>
+            <label>📅 ಬೆಳೆ ಆರಂಭ ದಿನಾಂಕ</label>
             <input type="date" id="crop_start_date" required />
           </div>
         </div>
 
         <div class="form-row">
           <div class="form-group">
-            <label>🧪 Soil pH Level</label>
+            <label>🧪 ಮಣ್ಣಿನ pH ಮಟ್ಟ</label>
             <input type="number" step="0.1" min="0" max="14" id="soil_ph" required placeholder="6.5" />
           </div>
           <div class="form-group">
-            <label>🏔️ Soil Type</label>
-            <input type="text" id="soil_type" required placeholder="e.g., Clay, Sandy, Loam" />
+            <label>🏔️ ಮಣ್ಣಿನ ಪ್ರಕಾರ</label>
+            <input type="text" id="soil_type" required placeholder="ಉದಾ., ಮಣ್ಣು, ಮರಳು, ಲೋಮ್" />
           </div>
         </div>
 
         <div class="form-group full-width">
-          <label>🗺️ State</label>
-          <input type="text" id="state" required placeholder="Enter your state" />
+          <label>🗺️ ರಾಜ್ಯ</label>
+          <input type="text" id="state" required placeholder="ನಿಮ್ಮ ರಾಜ್ಯ ನಮೂದಿಸಿ" />
         </div>
 
         <div class="form-row">
           <div class="form-group">
-            <label>🏘️ Taluk</label>
-            <input type="text" id="taluk" required placeholder="Enter taluk" />
+            <label>🏘️ ತಾಲೂಕು</label>
+            <input type="text" id="taluk" required placeholder="ತಾಲೂಕು ನಮೂದಿಸಿ" />
           </div>
           <div class="form-group">
-            <label>🏡 Village</label>
-            <input type="text" id="village" required placeholder="Enter village" />
+            <label>🏡 ಗ್ರಾಮ</label>
+            <input type="text" id="village" required placeholder="ಗ್ರಾಮ ನಮೂದಿಸಿ" />
           </div>
         </div>
 
         <button type="submit" class="submit-btn">
-          🚀 Register & Start Growing Smart
+          🚀 ನೋಂದಣಿ & ಬುದ್ಧಿವಂತವಾಗಿ ಬೆಳೆಯಿರಿ
         </button>
       </form>
     </div>
   </div>
 
-  <!-- Firebase SDK -->
+  <!-- Firebase SDK and JS logic remains the same -->
   <script type="module">
-    // Import Firebase SDKs
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-    // Your Firebase config
     const firebaseConfig = {
       apiKey: "AIzaSyAVzjc_wkA4kvDIcOGPobn3NVUItVuI3_Q",
       authDomain: "smartirriaug2025.firebaseapp.com",
@@ -357,24 +352,18 @@
       measurementId: "G-R1XG8Z8LNR"
     };
 
-    // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // Form elements
     const form = document.getElementById("registerForm");
     const formWrapper = document.getElementById("formWrapper");
     const submitBtn = document.querySelector(".submit-btn");
 
-    // Form Submit Event
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
-
-      // Add loading state
       formWrapper.classList.add("loading");
-      submitBtn.innerHTML = "🔄 Registering...";
+      submitBtn.innerHTML = "🔄 ನೋಂದಣಿ ಮಾಡುತ್ತಿದೆ...";
 
-      // Get form values
       const farmerData = {
         name: document.getElementById("name").value.trim(),
         email:document.getElementById("email").value,
@@ -392,14 +381,11 @@
 
       try {
         await addDoc(collection(db, "farmers"), farmerData);
-        
-        // Success state
         formWrapper.classList.remove("loading");
         formWrapper.classList.add("success");
-        submitBtn.innerHTML = "✅ Registration Successful!";
+        submitBtn.innerHTML = "✅ ನೋಂದಣಿ ಯಶಸ್ವಿ!";
         submitBtn.style.background = "linear-gradient(45deg, #27ae60, #2ecc71)";
-        
-        // Show success message with better styling
+
         const successMsg = document.createElement("div");
         successMsg.innerHTML = `
           <div style="
@@ -415,8 +401,8 @@
             font-weight: 600;
             animation: slideInRight 0.5s ease-out;
           ">
-            🎉 Welcome to Smart Agriculture Platform!<br>
-            <small style="opacity: 0.9;">Registration completed successfully</small>
+            🎉 ಸ್ಮಾರ್ಟ್ ಕೃಷಿ ವೇದಿಕೆಗೆ ಸ್ವಾಗತ!<br>
+            <small style="opacity: 0.9;">ನೋಂದಣಿ ಯಶಸ್ವಿಯಾಗಿ ಮುಗಿಯಿತು</small>
           </div>
           <style>
             @keyframes slideInRight {
@@ -426,24 +412,20 @@
           </style>
         `;
         document.body.appendChild(successMsg);
-        
-        // Reset form after delay
+
         setTimeout(() => {
           form.reset();
           formWrapper.classList.remove("success");
-          submitBtn.innerHTML = "🚀 Register & Start Growing Smart";
+          submitBtn.innerHTML = "🚀 ನೋಂದಣಿ & ಬುದ್ಧಿವಂತವಾಗಿ ಬೆಳೆಯಿರಿ";
           submitBtn.style.background = "linear-gradient(45deg, #2ecc71, #27ae60)";
           document.body.removeChild(successMsg);
         }, 3000);
 
       } catch (error) {
-        // Error state
         formWrapper.classList.remove("loading");
-        submitBtn.innerHTML = "❌ Registration Failed - Try Again";
+        submitBtn.innerHTML = "❌ ನೋಂದಣಿ ವಿಫಲ - ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ";
         submitBtn.style.background = "linear-gradient(45deg, #e74c3c, #c0392b)";
-        
-        console.error("Error adding document: ", error);
-        
+
         const errorMsg = document.createElement("div");
         errorMsg.innerHTML = `
           <div style="
@@ -459,21 +441,20 @@
             font-weight: 600;
             animation: slideInRight 0.5s ease-out;
           ">
-            ⚠️ Registration Failed!<br>
+            ⚠️ ನೋಂದಣಿ ವಿಫಲ!<br>
             <small style="opacity: 0.9;">${error.message}</small>
           </div>
         `;
         document.body.appendChild(errorMsg);
-        
+
         setTimeout(() => {
-          submitBtn.innerHTML = "🚀 Register & Start Growing Smart";
+          submitBtn.innerHTML = "🚀 ನೋಂದಣಿ & ಬುದ್ಧಿವಂತವಾಗಿ ಬೆಳೆಯಿರಿ";
           submitBtn.style.background = "linear-gradient(45deg, #2ecc71, #27ae60)";
           document.body.removeChild(errorMsg);
         }, 4000);
       }
     });
 
-    // Add input validation feedback
     const inputs = document.querySelectorAll('input[required]');
     inputs.forEach(input => {
       input.addEventListener('blur', function() {
@@ -485,7 +466,7 @@
           this.style.boxShadow = '0 0 0 4px rgba(46, 204, 113, 0.1)';
         }
       });
-      
+
       input.addEventListener('input', function() {
         if (this.style.borderColor === 'rgb(231, 76, 60)') {
           this.style.borderColor = '#e0e6ed';
@@ -494,14 +475,12 @@
       });
     });
 
-    // Phone number formatting
     document.getElementById('phone').addEventListener('input', function(e) {
       let value = e.target.value.replace(/\D/g, '');
       if (value.length > 10) value = value.slice(0, 10);
       e.target.value = value;
     });
 
-    // Soil pH validation
     document.getElementById('soil_ph').addEventListener('input', function(e) {
       let value = parseFloat(e.target.value);
       if (value < 0) e.target.value = 0;
