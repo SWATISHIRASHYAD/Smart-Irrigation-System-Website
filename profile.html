@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="kn">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Smart Irrigation - Farmer Profile</title>
+  <title>ಸ್ಮಾರ್ಟ್ ಸಿಂಚನ - ರೈತರ ಪ್ರೊಫೈಲ್</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -44,7 +44,7 @@
     }
     .profile-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
     .profile-card {
-      background: #f8f9fa; border-radius: 12px; padding: 20px;
+      background: lightgreen; border-radius: 12px; padding: 20px;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
     }
     .card-title {
@@ -52,8 +52,8 @@
       margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #e0e0e0;
     }
     .info-item { display: flex; justify-content: space-between; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #eee; }
-    .info-label { color: #666; font-weight: 500; }
-    .info-value { color: #333; font-weight: 600; }
+    .info-label { color: #666; font-weight: 1000; }
+    .info-value { color: #333; font-weight: 1000; }
     .footer { text-align: center; color: white; margin-top: 20px; font-size: 14px; }
   </style>
 </head>
@@ -61,62 +61,61 @@
   <div class="header">
     <div class="logo-section">
       <div class="logo">🌱</div>
-      <h1 class="system-title">Smart Irrigation</h1>
+      
+      <h1 class="system-title">ಸ್ಮಾರ್ಟ್ ಸಿಂಚನ ವ್ಯವಸ್ಥೆ</h1>
     </div>
     <div class="nav-links">
-      <a href="#" class="nav-link active">Profile</a>
-      <a href="#" class="nav-link" id="logoutBtn">Logout</a>
+      <a href="#" class="nav-link active">ಪ್ರೊಫೈಲ್</a>
+      <a href="#" class="nav-link" id="logoutBtn">ಲಾಗ್ ಔಟ್</a>
     </div>
   </div>
 
   <div class="profile-container">
     <div class="profile-header">
-      <h2 class="profile-title">Farmer Profile</h2>
-      <button class="edit-btn" id="editProfileBtn">Edit Profile</button>
+      <h2 class="profile-title">ರೈತರ ಪ್ರೊಫೈಲ್</h2>
+      <button class="edit-btn" id="editProfileBtn">ಪ್ರೊಫೈಲ್ ಸಂಪಾದನೆ</button>
     </div>
 
     <div class="profile-grid">
       <div class="profile-card">
-        <h3 class="card-title">Personal Information</h3>
-        <div class="info-item"><span class="info-label">Name:</span><span class="info-value" id="profileName">Loading...</span></div>
-        <div class="info-item"><span class="info-label">Phone:</span><span class="info-value" id="profilePhone">Loading...</span></div>
-        <div class="info-item"><span class="info-label">Account Created:</span><span class="info-value" id="profileCreatedAt">Loading...</span></div>
+        <h3 class="card-title">ವೈಯಕ್ತಿಕ ಮಾಹಿತಿಗಳು</h3>
+        <div class="info-item"><span class="info-label">ಹೆಸರು:</span><span class="info-value" id="profileName">ಲೋಡ್ ಆಗುತ್ತಿದೆ...</span></div>
+        <div class="info-item"><span class="info-label">ದೂರವಾಣಿ ಸಂಖ್ಯೆ:</span><span class="info-value" id="profilePhone">ಲೋಡ್ ಆಗುತ್ತಿದೆ...</span></div>
+        <div class="info-item"><span class="info-label">ಖಾತೆ ಸೃಷ್ಟಿಸಿದ ದಿನಾಂಕ:</span><span class="info-value" id="profileCreatedAt">ಲೋಡ್ ಆಗುತ್ತಿದೆ...</span></div>
       </div>
 
       <div class="profile-card">
-        <h3 class="card-title">Location Information</h3>
-        <div class="info-item"><span class="info-label">State:</span><span class="info-value" id="profileState">Loading...</span></div>
-        <div class="info-item"><span class="info-label">Taluk:</span><span class="info-value" id="profileTaluk">Loading...</span></div>
-        <div class="info-item"><span class="info-label">Village:</span><span class="info-value" id="profileVillage">Loading...</span></div>
+        <h3 class="card-title">ಸ್ಥಳ ಮಾಹಿತಿ</h3>
+        <div class="info-item"><span class="info-label">ರಾಜ್ಯ:</span><span class="info-value" id="profileState">ಲೋಡ್ ಆಗುತ್ತಿದೆ...</span></div>
+        <div class="info-item"><span class="info-label">ತಾಲೂಕು:</span><span class="info-value" id="profileTaluk">ಲೋಡ್ ಆಗುತ್ತಿದೆ...</span></div>
+        <div class="info-item"><span class="info-label">ಗ್ರಾಮ:</span><span class="info-value" id="profileVillage">ಲೋಡ್ ಆಗುತ್ತಿದೆ...</span></div>
       </div>
 
       <div class="profile-card">
-        <h3 class="card-title">Farm Information</h3>
-        <div class="info-item"><span class="info-label">Crop:</span><span class="info-value" id="profileCrop">Loading...</span></div>
-        <div class="info-item"><span class="info-label">Crop Start Date:</span><span class="info-value" id="profileCropDate">Loading...</span></div>
-        <div class="info-item"><span class="info-label">Soil Type:</span><span class="info-value" id="profileSoilType">Loading...</span></div>
-        <div class="info-item"><span class="info-label">Soil pH:</span><span class="info-value" id="profileSoilPH">Loading...</span></div>
+        <h3 class="card-title">ಹಣ್ಣು ಬೆಳೆಯುವ ಮಾಹಿತಿ</h3>
+        <div class="info-item"><span class="info-label">ಬೆಳೆ:</span><span class="info-value" id="profileCrop">ಲೋಡ್ ಆಗುತ್ತಿದೆ...</span></div>
+        <div class="info-item"><span class="info-label">ಬೆಳೆ ಆರಂಭ ದಿನಾಂಕ:</span><span class="info-value" id="profileCropDate">ಲೋಡ್ ಆಗುತ್ತಿದೆ...</span></div>
+        <div class="info-item"><span class="info-label">ಮಣ್ಣಿನ ವಿಧ:</span><span class="info-value" id="profileSoilType">ಲೋಡ್ ಆಗುತ್ತಿದೆ...</span></div>
+        <div class="info-item"><span class="info-label">ಮಣ್ಣಿನ pH ಮೌಲ್ಯ:</span><span class="info-value" id="profileSoilPH">ಲೋಡ್ ಆಗುತ್ತಿದೆ...</span></div>
       </div>
 
       <div class="profile-card">
-        <h3 class="card-title">Account Information</h3>
-        <div class="info-item"><span class="info-label">User ID:</span><span class="info-value" id="profileUserId">Loading...</span></div>
-        <div class="info-item"><span class="info-label">Email:</span><span class="info-value" id="profileEmail">Loading...</span></div>
-        <div class="info-item"><span class="info-label">Status:</span><span class="info-value" style="color: #4CAF50;">Active</span></div>
+        <h3 class="card-title">ಖಾತೆ ಮಾಹಿತಿ</h3>
+        <div class="info-item"><span class="info-label">ಬಳಕೆದಾರ ID:</span><span class="info-value" id="profileUserId">ಲೋಡ್ ಆಗುತ್ತಿದೆ...</span></div>
+        <div class="info-item"><span class="info-label">ಇಮೇಲ್:</span><span class="info-value" id="profileEmail">ಲೋಡ್ ಆಗುತ್ತಿದೆ...</span></div>
+        <div class="info-item"><span class="info-label">ಸ್ಥಿತಿ:</span><span class="info-value" style="color: #4CAF50;">ಸಕ್ರಿಯ</span></div>
       </div>
     </div>
   </div>
 
   <div class="footer">
-    <p>Smart Irrigation System © 2025 | Intelligent Water Management</p>
+    <p>ಸ್ಮಾರ್ಟ್ ಸಿಂಚನ ವ್ಯವಸ್ಥೆ © 2025 | ಬುದ್ಧಿವಂತ ನೀರು ನಿರ್ವಹಣೆ</p>
   </div>
 
-  <!-- Firebase SDKs -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
     import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js";
 
-    // Firebase config
     const firebaseConfig = {
       apiKey: "AIzaSyAVzjc_wkA4kvDIcOGPobn3NVUItVuI3_Q",
       authDomain: "smartirriaug2025.firebaseapp.com",
@@ -130,7 +129,6 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // 🔴 Hardcoded UID
     const hardcodedUid = "vIonrgoTtGr5nRhgYwUl";
     loadUserProfile(hardcodedUid);
 
@@ -141,39 +139,38 @@
 
         if (userDoc.exists()) {
           const data = userDoc.data();
-          console.log("Profile:", data);
+          console.log("ಪ್ರೊಫೈಲ್:", data);
           populateProfileData(data, userId);
         } else {
-          alert("User profile not found in Firestore.");
+          alert("ಬಳಕೆದಾರ ಪ್ರೊಫೈಲ್ Firestore ನಲ್ಲಿ ಕಂಡುಬರಲಿಲ್ಲ.");
         }
       } catch (e) {
-        console.error("Error fetching profile:", e);
+        console.error("ಪ್ರೊಫೈಲ್ ಪಡೆಯುವಲ್ಲಿ ದೋಷ:", e);
       }
     }
 
     function populateProfileData(data, userId) {
-      document.getElementById("profileName").textContent = data.name || "Not specified";
-      document.getElementById("profilePhone").textContent = data.phone || "Not specified";
+      document.getElementById("profileName").textContent = data.name || "ನಿರ್ದಿಷ್ಟಪಡಿಸಲಾಗಿಲ್ಲ";
+      document.getElementById("profilePhone").textContent = data.phone || "ನಿರ್ದಿಷ್ಟಪಡಿಸಲಾಗಿಲ್ಲ";
       
       if (data.createdAt?.seconds) {
         const date = new Date(data.createdAt.seconds * 1000);
         document.getElementById("profileCreatedAt").textContent = date.toLocaleDateString();
       } else {
-        document.getElementById("profileCreatedAt").textContent = "Not specified";
+        document.getElementById("profileCreatedAt").textContent = "ನಿರ್ದಿಷ್ಟಪಡಿಸಲಾಗಿಲ್ಲ";
       }
 
-      document.getElementById("profileState").textContent = data.state || "Not specified";
-      document.getElementById("profileTaluk").textContent = data.taluk || "Not specified";
-      document.getElementById("profileVillage").textContent = data.village || "Not specified";
-      document.getElementById("profileCrop").textContent = data.crop || "Not specified";
-      document.getElementById("profileCropDate").textContent = data.crop_start_date || "Not specified";
-      document.getElementById("profileSoilType").textContent = data.soil_type || "Not specified";
-      document.getElementById("profileSoilPH").textContent = data.soil_ph || "Not specified";
+      document.getElementById("profileState").textContent = data.state || "ನಿರ್ದಿಷ್ಟಪಡಿಸಲಾಗಿಲ್ಲ";
+      document.getElementById("profileTaluk").textContent = data.taluk || "ನಿರ್ದಿಷ್ಟಪಡಿಸಲಾಗಿಲ್ಲ";
+      document.getElementById("profileVillage").textContent = data.village || "ನಿರ್ದಿಷ್ಟಪಡಿಸಲಾಗಿಲ್ಲ";
+      document.getElementById("profileCrop").textContent = data.crop || "ನಿರ್ದಿಷ್ಟಪಡಿಸಲಾಗಿಲ್ಲ";
+      document.getElementById("profileCropDate").textContent = data.crop_start_date || "ನಿರ್ದಿಷ್ಟಪಡಿಸಲಾಗಿಲ್ಲ";
+      document.getElementById("profileSoilType").textContent = data.soil_type || "ನಿರ್ದಿಷ್ಟಪಡಿಸಲಾಗಿಲ್ಲ";
+      document.getElementById("profileSoilPH").textContent = data.soil_ph || "ನಿರ್ದಿಷ್ಟಪಡಿಸಲಾಗಿಲ್ಲ";
       document.getElementById("profileUserId").textContent = userId;
-      document.getElementById("profileEmail").textContent = data.email || "Not specified";
+      document.getElementById("profileEmail").textContent = data.email || "ನಿರ್ದಿಷ್ಟಪಡಿಸಲಾಗಿಲ್ಲ";
     }
 
-    // Logout (just redirect since no Auth)
     document.getElementById("logoutBtn").addEventListener("click", () => {
       window.location.href = "login.html";
     });
